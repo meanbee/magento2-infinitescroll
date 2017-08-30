@@ -1,0 +1,53 @@
+<?php /** @var \Magento\Catalog\Block\Product\ListProduct $block */
+
+/** @var \Magento\Catalog\Helper\Output $outputHelper */
+$outputHelper = $this->helper(\Magento\Catalog\Helper\Output::class);
+
+if ($block->getMode() == 'grid') {
+    $viewMode = 'grid';
+    $image = 'category_page_grid';
+    $showDescription = false;
+    $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+} else {
+    $viewMode = 'list';
+    $image = 'category_page_list';
+    $showDescription = true;
+    $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+}
+$pos = $block->getPositioned();
+
+$data = [];
+foreach ($block->getLoadedProductCollection() as $product) {
+    /** @var \Magento\Catalog\Model\Product $product */
+
+    $imageModel = $block->getImage($product, $image);
+    $addToBlock = $block->getChildBlock("addto");
+    $position = sprintf("left: %spx; top: %spx;", $imageModel->getWidth(), $imageModel->getHeight());
+
+    $data[] = [
+        // Attributes
+        "name"             => $outputHelper->productAttribute($product, $product->getName(), "name"),
+        "name_stripped"    => $block->stripTags($product->getName(), null, true),
+        "description"      => $outputHelper->productAttribute($product, $product->getShortDescription(), "short_description"),
+        "url"              => $product->getProductUrl(),
+        // Sections
+        "image"            => $imageModel->toHtml(),
+        "price"            => $block->getProductPrice($product),
+        "details"          => $block->getProductDetailsHtml($product),
+        "reviews"          => $block->getReviewsSummaryHtml($product, $templateType),
+        "add_to"           => $addToBlock ? $addToBlock->setProduct($product)->getChildHtml() : "",
+        // Flags
+        "is_salable"       => $product->isSalable(),
+        "is_in_stock"      => $product->getIsSalable(),
+        "show_description" => $showDescription,
+        // Misc
+        "style"            => [
+            "actions"   => strpos($pos, $viewMode . "-actions") ? $position : "",
+            "primary"   => strpos($pos, $viewMode . "-primary") ? $position : "",
+            "secondary" => strpos($pos, $viewMode . "-secondary") ? $position : "",
+        ],
+        "post_params"      => $block->getAddToCartPostParams($product),
+    ];
+}
+echo $this->helper(\Magento\Framework\Json\Helper\Data::class)->jsonEncode($data);
+

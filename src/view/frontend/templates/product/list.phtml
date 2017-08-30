@@ -1,0 +1,113 @@
+<?php
+
+use Magento\Framework\App\Action\Action;
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Catalog\Block\Product\ListProduct
+ */
+?>
+<?php
+$_productCollection = $block->getLoadedProductCollection();
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+?>
+<?php if (!$_productCollection->count()): ?>
+    <div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+<?php else: ?>
+    <?php echo $block->getToolbarHtml() ?>
+    <?php echo $block->getAdditionalHtml() ?>
+    <?php
+    if ($block->getMode() == 'grid') {
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    } else {
+        $viewMode = 'list';
+        $image = 'category_page_list';
+        $showDescription = true;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+    }
+    /**
+     * Position for actions regarding image size changing in vde if needed
+     */
+    $pos = $block->getPositioned();
+    ?>
+    <div class="products wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+        <?php $iterator = 1; ?>
+        <ol class="products list items product-items" data-block="product_list" data-bind="scope: 'product_list'">
+            <?php /*
+                Note: the lack of any whitespace between the knockout foreach loop
+                and the <li></li> tag below is intentional. Magento's luma theme
+                displays each product as an inline-block with a percentage of the
+                container width, so any whitespace between the closing </li> and the
+                following <li> will break the grid layout. Magento get around this
+                with some $iterator nonsense, and we fix it by omitting any whitespace
+                at the start and end of the ko template.
+            */ ?>
+            <!-- ko foreach: products --><li class="item product product-item">
+                    <div class="product-item-info" data-container="product-grid">
+                        <a data-bind="{attr: {href: url}, html: image}" class="product photo product-item-photo" tabindex="-1"></a>
+                        <div class="product details product-item-details">
+                            <strong class="product name product-item-name">
+                                <a class="product-item-link" data-bind="{attr: {href: url}, html: name}"></a>
+                            </strong>
+                            <div data-bind="html: reviews"></div>
+                            <div data-bind="html: price"></div>
+                            <div data-bind="html: details"></div>
+                            <div class="product-item-inner">
+                                <div class="product actions product-item-actions" data-bind="attr: {style: style.actions}">
+                                    <div class="actions-primary" data-bind="attr: {style: style.primary}">
+                                        <form data-role="tocart-form" data-bind="{if: is_salable, attr: {action: post_params.action}}" method="post">
+                                            <input type="hidden" name="product" data-bind="attr: {value: post_params.data.product}">
+                                            <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" data-bind="attr: {value: post_params.data.<?php echo Action::PARAM_NAME_URL_ENCODED ?>}">
+                                            <?php echo $block->getBlockHtml('formkey') ?>
+                                            <button type="submit"
+                                                    title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                    class="action tocart primary">
+                                                <span><?php /* @escapeNotVerified */ echo __('Add to Cart') ?></span>
+                                            </button>
+                                        </form>
+                                        <div class="stock available" data-bind="if: (!is_salable && is_in_stock)"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                        <div class="stock unavailable" data-bind="if: (!is_salable && !is_in_stock)"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                        <div data-role="add-to-links" class="actions-secondary" data-bind="{attr: {style: style.secondary}, html: add_to}"></div>
+                                    </div>
+                                </div>
+                                <div class="product description product-item-description" data-bind="if: show_description">
+                                    <div data-bind="html: description"></div>
+                                    <a data-bind="attr: {href: url, title: name_stripped}" class="action more"><?php /* @escapeNotVerified */ echo __('Learn More') ?></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li><!-- /ko -->
+        </ol>
+        <script type="text/x-magento-init">
+            {
+                "[data-block='product_list']": {
+                    "Magento_Ui/js/core/app": {
+                        "components": {
+                            "product_list": {
+                                "component": "Meanbee_InfiniteScroll/js/view/product_list",
+                                "products": <?php echo $block->setTemplate("Meanbee_InfiniteScroll::product/list_json.phtml")->toHtml() ?: "[]" ?>
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+    </div>
+    <?php echo $block->getToolbarHtml() ?>
+    <?php if (!$block->isRedirectToCartEnabled()) : ?>
+        <script type="text/x-magento-init">
+        {
+            "[data-role=tocart-form], .form.map.checkout": {
+                "catalogAddToCart": {}
+            }
+        }
+        </script>
+    <?php endif; ?>
+<?php endif; ?>
