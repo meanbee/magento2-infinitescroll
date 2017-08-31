@@ -19,25 +19,7 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
 <?php else: ?>
     <?php echo $block->getToolbarHtml() ?>
     <?php echo $block->getAdditionalHtml() ?>
-    <?php
-    if ($block->getMode() == 'grid') {
-        $viewMode = 'grid';
-        $image = 'category_page_grid';
-        $showDescription = false;
-        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
-    } else {
-        $viewMode = 'list';
-        $image = 'category_page_list';
-        $showDescription = true;
-        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
-    }
-    /**
-     * Position for actions regarding image size changing in vde if needed
-     */
-    $pos = $block->getPositioned();
-    ?>
-    <div class="products wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
-        <?php $iterator = 1; ?>
+    <div class="products wrapper <?php /* @escapeNotVerified */ echo $block->getMode(); ?> products-<?php /* @escapeNotVerified */ echo $block->getMode(); ?>">
         <ol class="products list items product-items" data-block="product_list" data-bind="scope: 'product_list'">
             <?php /*
                 Note: the lack of any whitespace between the knockout foreach loop
