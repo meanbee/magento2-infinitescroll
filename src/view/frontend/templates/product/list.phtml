@@ -19,8 +19,8 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
 <?php else: ?>
     <?php echo $block->getToolbarHtml() ?>
     <?php echo $block->getAdditionalHtml() ?>
-    <div class="products wrapper <?php /* @escapeNotVerified */ echo $block->getMode(); ?> products-<?php /* @escapeNotVerified */ echo $block->getMode(); ?>">
-        <ol class="products list items product-items" data-block="product_list" data-bind="scope: 'product_list'">
+    <div data-block="product_list" data-bind="scope: 'product_list'" class="products wrapper <?php /* @escapeNotVerified */ echo $block->getMode(); ?> products-<?php /* @escapeNotVerified */ echo $block->getMode(); ?>">
+        <ol class="products list items product-items">
             <?php /*
                 Note: the lack of any whitespace between the knockout foreach loop
                 and the <li></li> tag below is intentional. Magento's luma theme
@@ -30,7 +30,7 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                 with some $iterator nonsense, and we fix it by omitting any whitespace
                 at the start and end of the ko template.
             */ ?>
-            <!-- ko foreach: products --><li class="item product product-item">
+            <!-- ko foreach: state.products --><li class="item product product-item">
                     <div class="product-item-info" data-container="product-grid">
                         <a data-bind="{attr: {href: url}, html: image}" class="product photo product-item-photo" tabindex="-1"></a>
                         <div class="product details product-item-details">
@@ -67,21 +67,24 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                     </div>
                 </li><!-- /ko -->
         </ol>
-        <script type="text/x-magento-init">
-            {
-                "[data-block='product_list']": {
-                    "Magento_Ui/js/core/app": {
-                        "components": {
-                            "product_list": {
-                                "component": "Meanbee_InfiniteScroll/js/view/product_list",
-                                "products": <?php echo $block->setTemplate("Meanbee_InfiniteScroll::product/list_json.phtml")->toHtml() ?: "[]" ?>
-                            }
+        <div class="product-list-actions">
+            <button class="action secondary" data-bind="{visible: state.isMoreAvailable, click: loadMore, disable: state.isFetching}" style="display: none"><?php echo __('View More') ?></button>
+        </div>
+    </div>
+    <script type="text/x-magento-init">
+        {
+            "[data-block='product_list']": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "product_list": {
+                            "component": "Meanbee_InfiniteScroll/js/view/product_list",
+                            "state": <?php echo $this->helper(\Meanbee\InfiniteScroll\Helper\Data::class)->getProductListJson($block) ?: "[]" ?>
                         }
                     }
                 }
             }
-        </script>
-    </div>
+        }
+    </script>
     <?php echo $block->getToolbarHtml() ?>
     <?php if (!$block->isRedirectToCartEnabled()) : ?>
         <script type="text/x-magento-init">

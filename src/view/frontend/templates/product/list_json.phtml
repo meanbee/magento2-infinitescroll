@@ -2,6 +2,7 @@
 
 /** @var \Magento\Catalog\Helper\Output $outputHelper */
 $outputHelper = $this->helper(\Magento\Catalog\Helper\Output::class);
+$toolbarBlock = $block->getToolbarBlock();
 
 if ($block->getMode() == 'grid') {
     $viewMode = 'grid';
@@ -16,7 +17,10 @@ if ($block->getMode() == 'grid') {
 }
 $pos = $block->getPositioned();
 
-$data = [];
+$data = [
+    "products" => [],
+    "isMoreAvailable" => $toolbarBlock->getCurrentPage() != $toolbarBlock->getLastPageNum(),
+];
 foreach ($block->getLoadedProductCollection() as $product) {
     /** @var \Magento\Catalog\Model\Product $product */
 
@@ -24,7 +28,7 @@ foreach ($block->getLoadedProductCollection() as $product) {
     $addToBlock = $block->getChildBlock("addto");
     $position = sprintf("left: %spx; top: %spx;", $imageModel->getWidth(), $imageModel->getHeight());
 
-    $data[] = [
+    $data["products"][] = [
         // Attributes
         "name"             => $outputHelper->productAttribute($product, $product->getName(), "name"),
         "name_stripped"    => $block->stripTags($product->getName(), null, true),
