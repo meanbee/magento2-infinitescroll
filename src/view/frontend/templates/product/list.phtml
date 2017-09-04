@@ -67,8 +67,8 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                     </div>
                 </li><!-- /ko -->
         </ol>
-        <div class="product-list-actions">
-            <button class="action secondary" data-bind="{visible: state.isMoreAvailable, click: loadMore, disable: state.isFetching}" style="display: none"><?php echo __('View More') ?></button>
+        <div class="product-list-actions" data-bind="blockLoader: state.isFetching">
+            <button class="action secondary" data-bind="{visible: state.isMoreAvailable() && !state.isFetching(), click: loadMore}" style="display: none"><?php echo __('View More') ?></button>
         </div>
     </div>
     <script type="text/x-magento-init">
