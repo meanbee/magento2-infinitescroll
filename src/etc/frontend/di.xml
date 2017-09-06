@@ -3,4 +3,7 @@
     <type name="Magento\Catalog\Controller\Category\View">
         <plugin name="meanbee-infinitescroll-category-ajax" type="Meanbee\InfiniteScroll\Plugin\Catalog\Controller\Category\ViewPlugin" sortOrder="999" />
     </type>
+    <type name="Magento\CatalogSearch\Controller\Result\Index">
+        <plugin name="meanbee-infinitescroll-catalogsearch-ajax" type="Meanbee\InfiniteScroll\Plugin\CatalogSearch\Controller\Result\IndexPlugin" sortOrder="999" />
+    </type>
 </config>
