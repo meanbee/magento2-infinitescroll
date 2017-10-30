@@ -13,7 +13,7 @@ Install this extension with Composer:
 The extension is enabled by default and has no configuration options. Once installed (and cache is flushed), it will
 replace the pager at the bottom of category and search pages with a "View More" button.
 
-The extension replaces the `Meanbee_Catalog::product/list.phtml` template with its own, so any changes to the product
+The extension replaces the `Magento_Catalog::product/list.phtml` template with its own, so any changes to the product
 list HTML need to be made in `Meanbee_InfiniteScroll::product/list.phtml`.
 
 ## Development
