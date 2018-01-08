@@ -58,7 +58,7 @@ services:
       COMPOSER_HOME: /root/.composer
       COMPOSER_ALLOW_SUPERUSER: 1
       M2SETUP_INSTALL_DB: "true"
-      M2SETUP_VERSION: 2.1.*
+      M2SETUP_VERSION: 2.2.*
       M2SETUP_USE_SAMPLE_DATA: "true"
       M2SETUP_DB_HOST: db
       M2SETUP_DB_NAME: magento2
@@ -89,7 +89,7 @@ services:
       TERM: dumb
 
   magento:
-    image: meanbee/magento2-data:2.1
+    image: meanbee/magento2-data:2.2-sample
     volumes:
       - ..:/extensions/Meanbee_InfiniteScroll
     environment:
